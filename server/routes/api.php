@@ -18,6 +18,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::middleware('auth:sanctum')->post('/pay', function (Request $request) {
-  return 'thats good';
-});
+// Route::middleware('auth:sanctum')->post('/pay', function (Request $request) {
+//   return 'thats good';
+// });
+
+Route::middleware('auth:sanctum')->post('/pay', 'HomeController@pay')->name('pay');

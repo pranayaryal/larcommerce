@@ -19,6 +19,10 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+// Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/home', function (Request $request){
+  return 'great you are home';
+});
+
 Route::get('/checkout', 'HomeController@checkout')->name('checkout');
 Route::post('/pay', 'HomeController@pay')->name('pay');

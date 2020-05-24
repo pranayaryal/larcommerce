@@ -1,16 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import {
   useStripe,
   useElements,
   CardElement,
 } from '@stripe/react-stripe-js';
 
+import Cookies from 'js-cookie';
+
+axios.defaults.withCredentials = true;
+
 //import CardSection from './CardSection';
 const CheckoutForm = () => {
   const stripe = useStripe();
   const elements = useElements();
 
-  const [ error, setError ] = useState("");
+  const [error, setError] = useState("");
+  const [cardSuccess, setCardSuccess ] = useState("");
+
+  useEffect(() => {
+    //Sets the csrf token https://laravel.com/docs/7.x/sanctum
+    axios.get('/sanctum/csrf-cookie').then(response => {
+      //
+    })
+
+  }, []);
 
 
   const CARD_ELEMENT_OPTIONS = {
@@ -54,45 +68,52 @@ const CheckoutForm = () => {
 
   const handlePaymentMethodResult = async (result) => {
     console.log('you are in handlePaymentMethodResult');
+
+
     if (result.error) {
-      setError(result.error.message); 
+      setCardSuccess(result.error.message);
       // An error happened when collecting card details,
       // show `result.error.message` in the payment form.
     } else {
+      const headers = {
+        'Content-Type': 'application/json'
+      }
       // Otherwise send paymentMethod.id to your server (see Step 3)
-      const response = await fetch('http://larserver.app/api/pay', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-          // 'X-CSRF-TOKEN': csrf_token
-        },
-        body: JSON.stringify({
-          payment_method_id: result.paymentMethod.id,
-        }),
+      const data = JSON.stringify({
+        payment_method_id: result.paymentMethod.id,
+      })
+
+      const response = await axios.post('/api/pay', data, {
+        headers: headers
       });
 
-      const serverResponse = await response.json();
 
-      console.log(serverResponse);
-
-      handleServerResponse(serverResponse);
+      handleServerResponse(response);
     }
   };
 
-  const handleServerResponse = (serverResponse) => {
-    if (serverResponse.error) {
+  const handleServerResponse = (response) => {
+    if (response.data.error) {
       // An error happened when charging the card,
       // show the error in the payment form.
+      setCardSuccess(response.data.error);
+      elements.getElement(CardElement).clear();
     } else {
-      setError("Congrats your payment succeeded");
+      setCardSuccess("Congrats your payment succeeded");
+      elements.getElement(CardElement).clear();
       // Show a success message
     }
   };
 
   const handleCardChange = (event) => {
+    setCardSuccess("");
+    setError("");
     if (event.error) {
       // Show `event.error.message` in the payment form.
       setError(event.error.message);
+    }
+    else{
+      setError('');
     }
   };
 
@@ -100,10 +121,10 @@ const CheckoutForm = () => {
   return (
     <form onSubmit={handleSubmit}>
       <p>{error}</p>
-      <CardElement onChange={handleCardChange} options={CARD_ELEMENT_OPTIONS}/>
-      {/* <CardSection /> */}
+      <p>{cardSuccess}</p>
+      <CardElement onChange={handleCardChange} options={CARD_ELEMENT_OPTIONS} autofocus/>
       <br />
-      <button type="submit" disabled={!stripe} className="button is-info">
+      <button type="submit" disabled={!stripe} className="button is-info" >
         Submit Payment
       </button>
     </form>
