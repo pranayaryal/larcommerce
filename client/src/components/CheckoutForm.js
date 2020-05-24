@@ -4,6 +4,7 @@ import {
   useStripe,
   useElements,
   CardElement,
+  CardElementProps
 } from '@stripe/react-stripe-js';
 
 import Cookies from 'js-cookie';
@@ -16,7 +17,7 @@ const CheckoutForm = () => {
   const elements = useElements();
 
   const [error, setError] = useState("");
-  const [cardSuccess, setCardSuccess ] = useState("");
+  const [cardSuccess, setCardSuccess] = useState("");
 
   useEffect(() => {
     //Sets the csrf token https://laravel.com/docs/7.x/sanctum
@@ -28,10 +29,12 @@ const CheckoutForm = () => {
 
 
   const CARD_ELEMENT_OPTIONS = {
+    iconStyle: 'solid',
     style: {
       base: {
         color: "#32325d",
-        fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+        lineHeight: '24px',
+        fontFamily: 'Roboto, "Helvetica Neue", sans-serif',
         fontSmoothing: "antialiased",
         fontSize: "16px",
         "::placeholder": {
@@ -39,12 +42,13 @@ const CheckoutForm = () => {
         }
       },
       invalid: {
-        color: "#fa755a",
+        color: '#B71C1C',
         iconColor: "#fa755a"
       },
       focus: {
         color: 'orange'
-      }
+      },
+      hidePostalCode: false
     }
   }
 
@@ -75,6 +79,8 @@ const CheckoutForm = () => {
       // An error happened when collecting card details,
       // show `result.error.message` in the payment form.
     } else {
+      const props = CardElementProps;
+      console.log(`The props are ${props}`);
       const headers = {
         'Content-Type': 'application/json'
       }
@@ -83,12 +89,22 @@ const CheckoutForm = () => {
         payment_method_id: result.paymentMethod.id,
       })
 
-      const response = await axios.post('/api/pay', data, {
+      await axios.post('/api/pay', data, {
         headers: headers
-      });
+      })
+        .then(res => console.log(res))
+        .catch(error => {
+
+          if (error.response.status === 401) {
+            // elements.getElement(CardElement).clear();
+            setCardSuccess(`${error.response.statusText}, please login to send payment`);
+            elements.getElement(CardElement).clear();
+          }
+        });
 
 
-      handleServerResponse(response);
+
+      //handleServerResponse(response);
     }
   };
 
@@ -112,7 +128,7 @@ const CheckoutForm = () => {
       // Show `event.error.message` in the payment form.
       setError(event.error.message);
     }
-    else{
+    else {
       setError('');
     }
   };
@@ -122,7 +138,9 @@ const CheckoutForm = () => {
     <form onSubmit={handleSubmit}>
       <p>{error}</p>
       <p>{cardSuccess}</p>
-      <CardElement onChange={handleCardChange} options={CARD_ELEMENT_OPTIONS} autofocus/>
+      <CardElement
+        onChange={handleCardChange}
+        options={CARD_ELEMENT_OPTIONS} />
       <br />
       <button type="submit" disabled={!stripe} className="button is-info" >
         Submit Payment

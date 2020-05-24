@@ -21,7 +21,7 @@ Auth::routes();
 
 // Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/home', function (Request $request){
-  return 'great you are home';
+  echo json_encode(['success' => 'You are authenticated']);
 });
 
 Route::get('/checkout', 'HomeController@checkout')->name('checkout');
