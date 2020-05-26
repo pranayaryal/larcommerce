@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use Auth;
 
 use Illuminate\Http\Request;
 
@@ -24,27 +25,47 @@ class HomeController extends Controller
 
     public function pay(Request $request)
     {
-        \Stripe\Stripe::setApiKey('sk_test_kgqSnqchn19Vya946n5TZDkp');
-        try {
-          $intent = \Stripe\PaymentIntent::create([
-            'amount' => 1000,
-            'currency' => 'usd',
-            'payment_method' => $request->payment_method_id,
-            'confirm' => true,
-            'error_on_requires_action' => true
+        \Stripe\Stripe::setApiKey(env('STRIPE_API_KEY'));
+         $intent = \Stripe\PaymentIntent::create([
+          'amount' => 1090,
+          'currency' => 'usd',
+          'metadata' => ['integration_check' => 'accept_a_payment'],
+          'payment_method_types' => ['card'],
+          'receipt_email' => 'drpranayaryal@gmail.com',
+         ]);
 
-          ]);
 
-        if ($intent->status == 'succeeded') {
-          echo json_encode(['success' => true]);
-        } else {
-          echo json_encode(['error' => 'Invalid payment status']);
-        }
+          session(['client_secret' => $intent->client_secret]);
+          echo json_encode(['success' => true, 'client_secret' => $intent->client_secret ]);
 
-        } catch (\Stripe\Exception\ApiErrorException $e) {
-          echo json_encode(['error' => $e->getMessage()]);
-        }
     }
+
+    public function getSecret(Request $request)
+    {
+      $client_secret = $request->session()->get('client_secret');
+      echo json_encode(['client_secret' => $client_secret]);
+
+    }
+
+    public function logout(Request $request)
+    {
+      Auth::logout();
+      echo json_encode(['success' => 'You have beeen logged out']);
+    }
+
+
+    public function checkLoggedIn(Request $request)
+    {
+      if (Auth::user()) {
+        //echo json_encode(['success' => 'You are logged in']);
+        echo json_encode(['success' => true]);
+      }
+      else { 
+        //echo json_encode(['success' => 'You are not logged in']);
+        echo json_encode(['success' => false]);
+      }
+    }
+
 
 
 }

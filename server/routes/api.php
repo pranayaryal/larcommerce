@@ -22,5 +22,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 //   return 'thats good';
 // });
 
-Route::middleware('auth:sanctum')->post('/pay', 'HomeController@pay')->name('pay');
+//Route::middleware('auth:sanctum')->post('/pay', 'HomeController@pay')->name('pay');
+Route::middleware('auth:api')->post('/pay', 'HomeController@pay')->name('pay');
 // Route::middleware('auth:api')->post('/pay', 'HomeController@pay')->name('pay');
+Route::middleware('auth:api')->get('/secret', 'HomeController@getSecret');

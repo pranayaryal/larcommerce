@@ -1,14 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+import LoginForm from './LoginForm';
+axios.defaults.withCredentials = true;
+
 const Login = props => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [ error, setError ] = useState("");
 
+  useEffect(() => {
+    //Sets the csrf token https://laravel.com/docs/7.x/sanctum
+    axios.get('/sanctum/csrf-cookie').then(response => {
+      //
+    })
+
+    
+  }, []);
+
   const handleSubmit = async (ev) => {
     ev.preventDefault();
-    console.log('you are in submit');
     const data = {
       email,
       password
@@ -21,52 +32,48 @@ const Login = props => {
     await axios.post('/login', data, {
       headers: headers
     })
-      .then(res => console.log(res))
+      .then(res => {
+        setError(res.data.success);
+        setEmail('');
+        setPassword('');
+      })
       .catch(error => {
         if (error.response.status === 422){
           console.log(error.response);
-          setError(error.response.data.message);
+          setError(error.response.data.errors.email[0]);
+          // setEmail('');
+          setPassword('');
         }
 
       });
     //apply login logic here
+
+
   }
 
-  axios.defaults.withCredentials = true;
 
-  useEffect(() => {
-    //Sets the csrf token https://laravel.com/docs/7.x/sanctum
-    axios.get('/sanctum/csrf-cookie').then(response => {
-      //
-    })
-  }, []);
+  const handleEmailChange = ev => {
+    setError('');
+    setEmail(ev.target.value)
+  }
+
+
+  const handlePasswordChange = ev => {
+    setError('');
+    setPassword(ev.target.value)
+  }
+
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <p>Please login</p>
-        <div className="columns">
-          <div className="column is-one-third">
-            <input
-              className="input"
-              type="text"
-              placeholder="email"
-              onChange={(e) => setEmail(e.target.value)} />
-          </div>
-        </div>
-        <div className="columns">
-          <div className="column is-one-third">
-            <input
-              className="input"
-              type="password"
-              placeholder="password"
-              onChange={(e) => setPassword(e.target.value)} />
-          </div>
-        </div>
-        <button type="submit" className="button is-info" >
-          Login
-      </button>
-      </form>
+    <div className="ml-40 mr-40 max-w-sm px-20 py-20">
+    { props.loggedIn ?? 
+      <LoginForm 
+        handleEmailChange={handleEmailChange}
+        handlePasswordChange={handlePasswordChange}
+        handleSubmit={handleSubmit}
+        error={error}
+        />
+    }
 
     </div>
   )

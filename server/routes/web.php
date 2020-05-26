@@ -17,6 +17,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+
+Route::get('/logout', 'HomeController@logout')->name('logout');
+// Route::post('/login', '\App\Http\Controllers\Auth\LoginController@login')->name('login');
 Auth::routes();
 
 // Route::get('/home', 'HomeController@index')->name('home');
@@ -26,3 +29,5 @@ Route::get('/home', function (Request $request){
 
 Route::get('/checkout', 'HomeController@checkout')->name('checkout');
 Route::post('/pay', 'HomeController@pay')->name('pay');
+Route::get('/check-login', 'HomeController@checkLoggedIn');
+
