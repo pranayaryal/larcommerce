@@ -14,3 +14,5 @@ yarn-error.log
 
 ##Related to editor
 .idea/
+/client/.env
+/server/.env
