@@ -1,11 +1,12 @@
 import React from 'react';
 
-const Register = () => {
+const StarRating = () => {
     return (
         <div>
+
             
         </div>
     );
 }
 
-export default Register;
+export default StarRating;

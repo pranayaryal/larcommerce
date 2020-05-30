@@ -1,0 +1,84 @@
+
+$brandprimary: #d96528;
+$brandsecondary: #03c1c1;
+
+.itemContain {
+    margin-left: 8%;
+    width: 80%;
+    display: grid;
+    justify-content: space-around;
+    grid-template-columns: 1fr 2fr;
+}
+
+.productButton {
+  border: 1px solid #ccc;
+  background: $brandprimary;
+  padding: 10px 14px;
+  cursor: pointer;
+  color: black;
+  font-weight: 700;
+  font-family: "Monteserrat", -apple-system, BlinkMacSystemFont,
+   'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  transition: 0.3s all ease;
+  &:hover {
+    background: #c14103;
+    border: 1px solid black;
+    color: white;
+  }
+}
+
+
+.productInput {
+    width: 60px;
+    font-size: 25px;
+    margin: 0 10px;
+    padding: 5px 10px;
+}
+
+.updateNum {
+    background: black;
+    border-color: black;
+    color: white;
+    font-size: 20px;
+    width: 45px;
+}
+
+.price {
+  color: $brandprimary;
+  font-size: 20px;
+  margin: 5px 0;
+  font-weight: normal;
+  font-family: "pt serif", -apple-system, blinkmacsystemfont, 
+  'segoe ui', roboto, oxygen, ubuntu, cantarell, 'open sans', 'helvetica neue', sans-serif;
+
+}
+
+.productName {
+  font-family: "pt serif", -apple-system, blinkmacsystemfont, 
+  'segoe ui', roboto, oxygen, ubuntu, cantarell, 'open sans', 'helvetica neue', sans-serif;
+  font-weight: normal;
+}
+
+.productParagraph {
+  margin: 20px 0;
+}
+
+.quantity {
+    display: flex;
+}
+
+@media screen and (max-width: 650px) {
+    .productImg {
+        width: 100%;
+    }
+
+    .itemContain {
+        margin-left: 0 !important;
+        width: 95% !important;
+    }
+
+    .review {
+        width: 90%;
+        margin-left: 4%;
+    }
+}
