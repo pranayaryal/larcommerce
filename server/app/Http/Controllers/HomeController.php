@@ -27,7 +27,7 @@ class HomeController extends Controller
     {
         \Stripe\Stripe::setApiKey(env('STRIPE_API_KEY'));
          $intent = \Stripe\PaymentIntent::create([
-          'amount' => 1090,
+          'amount' => (int)$request->amount * 100,
           'currency' => 'usd',
           'metadata' => ['integration_check' => 'accept_a_payment'],
           'payment_method_types' => ['card'],
@@ -64,6 +64,16 @@ class HomeController extends Controller
         //echo json_encode(['success' => 'You are not logged in']);
         echo json_encode(['success' => false]);
       }
+    }
+
+    public function cartItems(Request $request)
+    {
+      echo json_encode(['success' => 'you are in cart items']);
+    }
+
+    public function addToCart(Request $request)
+    {
+      echo json_encode(['success' => 'you are in cart items']);
     }
 
 

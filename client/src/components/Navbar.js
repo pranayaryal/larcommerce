@@ -1,31 +1,37 @@
 import React from 'react';
-import styled from 'styled-components';
-import { NavLink, Route } from 'react-router-dom'
-
-import navStyles from './navbar.module.scss';
-
 
 const Navbar = () => {
-
     return (
-        <header className={navStyles.headerClass}>
-            <h1>Skyline Ivy</h1>
-            <nav className={navStyles.navClass}>
-                <ul>
-                    <li>
-                        <NavLink to="/">Home</NavLink>
-                    </li>
-                    <li>
-                        <NavLink to="/all">All</NavLink>
-                    </li>
-                    <li>
-                        <div className={navStyles.carttotal} >3</div>
-                        <NavLink to="/cart">Cart</NavLink>
-                    </li>
+        <div>
+            <nav class="navbar" role="navigation" aria-label="main navigation">
+                <div class="navbar-brand">
+                    <a class="navbar-item" href="https://bulma.io">
+                        <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28" />
+                    </a>
 
-                </ul>
+                    <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true"></span>
+                    </a>
+                </div>
+
+                <div id="navbarBasicExample" class="navbar-menu">
+                    <div class="navbar-start">
+                        <a class="navbar-item">Home</a>
+                        <a class="navbar-item">Checkout</a>
+                    </div>
+
+                    <div class="navbar-end">
+                        <div class="navbar-item">
+                            <div class="buttons">
+                                <a class="button is-light">Cart</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </nav>
-        </header>
+        </div>
     );
 }
 

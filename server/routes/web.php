@@ -30,4 +30,10 @@ Route::get('/home', function (Request $request){
 Route::get('/checkout', 'HomeController@checkout')->name('checkout');
 Route::post('/pay', 'HomeController@pay')->name('pay');
 Route::get('/check-login', 'HomeController@checkLoggedIn');
+Route::get('/client-secret', function (Request $request) {
+  return json_encode(['client_secret' => session()->get('client_secret')]);
+});
+
+Route::get('/cart-items', 'HomeController@cartItems');
+Route::post('/addToCart', 'HomeController@addToCart');
 

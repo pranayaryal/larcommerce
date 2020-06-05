@@ -16,7 +16,8 @@ const CheckoutForm = () => {
 
   const [error, setError] = useState("");
   const [cardSuccess, setCardSuccess] = useState("");
-  const [ clientSecret, setClientSecret ] = useState("");
+  const [clientSecret, setClientSecret] = useState("");
+  const [amount, setAmount] = useState("");
 
   useEffect(() => {
     //Sets the csrf token https://laravel.com/docs/7.x/sanctum
@@ -25,6 +26,32 @@ const CheckoutForm = () => {
     })
 
   }, []);
+
+  useEffect(() => {
+    setClientSecret('');
+
+    const getClientSecret = async () => {
+      const headers = {
+        'Content-Type': 'application/json'
+      }
+      // Otherwise send paymentMethod.id to your server (see Step 3)
+      const data = JSON.stringify({
+        amount: amount
+      })
+
+      await axios.post('/pay', data, {
+        headers: headers
+      })
+        .then(res => {
+          setClientSecret(res.data.client_secret);
+        })
+        .catch(err => console.log(err.response))
+
+    }
+
+    getClientSecret();
+
+  }, [amount])
 
 
   const CARD_ELEMENT_OPTIONS = {
@@ -60,12 +87,12 @@ const CheckoutForm = () => {
     const client_secret = await createPaymentIntent();
 
     if (!stripe || !elements) {
-      return; 
+      return;
     }
 
-    console.log(`The client secret is ${clientSecret}`)
+    console.log(`The client secret is ${client_secret}`)
 
-    const result = await stripe.confirmCardPayment(client_secret, {
+    const result = await stripe.confirmCardPayment(clientSecret, {
       payment_method: {
         card: elements.getElement(CardElement),
         billing_details: {
@@ -76,101 +103,44 @@ const CheckoutForm = () => {
 
     if (result.error) {
       console.log(result.error)
-        //  
+      //  
     } else {
       if (result.paymentIntent.status === 'succeeded') {
         console.log('payment succeeded');
         elements.getElement(CardElement).clear()
+        setAmount('');
         // Show a success message to your customer
         // There's a risk of the customer closing the window before callback
         // execution. Set up a webhook or plugin to listen for the
         // payment_intent.succeeded event that handles any business critical
         // post-payment actions.
-        
+
       }
     }
 
   };
 
   const createPaymentIntent = async () => {
-      const headers = {
-        'Content-Type': 'application/json'
-      }
-      // Otherwise send paymentMethod.id to your server (see Step 3)
-      const data = JSON.stringify({
-      })
+    const headers = {
+      'Content-Type': 'application/json'
+    }
+    // Otherwise send paymentMethod.id to your server (see Step 3)
+    const data = JSON.stringify({
+      amount: amount
+    })
 
-      let client_secret;
+    let client_secret;
 
-      await axios.post('/pay', data, {
-        headers: headers
-      })
+    await axios.post('/pay', data, {
+      headers: headers
+    })
       .then(res => {
         client_secret = res.data.client_secret;
       })
 
-      return client_secret;
+    return client_secret;
 
   }
-
-
-  const handlePaymentMethodResult = async (result) => {
-
-    if (result.error) {
-      setCardSuccess(result.error.message);
-      // An error happened when collecting card details,
-      // show `result.error.message` in the payment form.
-    } else {
-
-      const headers = {
-        'Content-Type': 'application/json'
-      }
-      // Otherwise send paymentMethod.id to your server (see Step 3)
-      const data = JSON.stringify({
-        payment_method_id: result.paymentMethod.id,
-      })
-
-      await axios.post('/api/pay', data, {
-        headers: headers
-      })
-        .then(res => {
-          if (res.data.success) {
-            setCardSuccess("That was successful"); 
-            elements.getElement(CardElement).clear();
-          }
-          else{
-            setCardSuccess(res.data.error);
-            elements.getElement(CardElement).clear()
-          }
-        })
-        .catch(error => {
-
-          if (error.response.status === 401) {
-            setCardSuccess(`${error.response.statusText}, please login to send payment`);
-            elements.getElement(CardElement).clear()
-          }
-        });
-
-
-
-
-
-      //handleServerResponse(response);
-    }
-  };
-
-  const handleServerResponse = (response) => {
-    if (response.data.error) {
-      // An error happened when charging the card,
-      // show the error in the payment form.
-      setCardSuccess(response.data.error);
-      elements.getElement(CardElement).clear();
-    } else {
-      setCardSuccess("Congrats your payment succeeded");
-      elements.getElement(CardElement).clear();
-      // Show a success message
-    }
-  };
 
   const handleCardChange = (event) => {
     if (event.error) {
@@ -183,15 +153,25 @@ const CheckoutForm = () => {
   return (
     // <div className="ml-40 mr-40 max-w-sm px-30 py-10">
     <div className="container mx-auto px-50 py-10 ml-40 mr-40 max-w-sm">
-      <p className="text-gray-700">{error}</p>
+      {error && <p className="text-gray-700">{error}</p>}
       <p className="text-purple-700 mb-2 text-sm">{cardSuccess}</p>
       <form onSubmit={handleSubmit}>
+        <input className="appearance-none block 
+        w-full bg-gray-200 text-gray-700 border border-cyan-500 
+        rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+          type="text"
+          placeholder="Amount"
+          autoFocus
+          onChange={e => setAmount(e.target.value)}
+        />
         <CardElement
           onChange={handleCardChange}
-          options={CARD_ELEMENT_OPTIONS} 
-          />
+          options={CARD_ELEMENT_OPTIONS}
+        />
         <br />
-        <button type="submit" disabled={!stripe} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" >
+        <button type="submit" disabled={!stripe || isNaN(amount)}
+          className="bg-blue-500 
+        hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" >
           Submit Payment
       </button>
       </form>
