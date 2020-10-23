@@ -1,26 +1,22 @@
-import React from 'react';
+import React from 'react'
 
-const Card = (props) => {
-    return (
-        <div class="card">
-            <div class="card-image">
-                <figure class="image is-4by3">
-                    <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image" />
-                </figure>
-            </div>
-            <div class="card-content">
+const Card = props => {
+  return (
+    <div className="flex flex-row justify-start">
+      <div className="w-3/5 text-gray-700 text-center bg-gray-400 px-4 py-2 m-2">
+        <p>Scalable</p>
+      </div>
+      <div className="w-1/5 text-gray-700 text-center bg-gray-400 px-4 py-2 m-2">
+        <p>Fast</p>
+      </div>
+      <div className="w-2/5 text-gray-700 text-center bg-gray-400 px-4 py-2 m-2">
+        <p>Reliable</p>
+      </div>
 
-                <div class="content">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    Phasellus nec iaculis mauris.
-                        <br />
-                </div>
-                <a href="/details" 
-                className="button is-primary" 
-                onClick={props.handleDetailsClick}>Details</a>
-            </div>
-        </div>
-    );
-}
+
+    </div>
+
+  )
+};
 
 export default Card;

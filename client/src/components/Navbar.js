@@ -1,38 +1,22 @@
-import React from 'react';
+import React from 'react'
 
-const Navbar = () => {
-    return (
-        <div>
-            <nav class="navbar" role="navigation" aria-label="main navigation">
-                <div class="navbar-brand">
-                    <a class="navbar-item" href="https://bulma.io">
-                        <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28" />
-                    </a>
+const Navbar = props => {
+  return (
+    <div className="px-20">
+      <ul className="flex my-6 text-lg">
+        <li className="mr-6">
+          <a className="text-blue-500 hover:text-blue-800 px-4 py-2" href="#">Home</a>
+        </li>
+        <li className="mr-6">
+          <a className="text-blue-500 hover:text-blue-800 px-4 py-2" href="#">Links</a>
+        </li>
+        <li className="mr-6">
+          <a className="text-blue-500 hover:text-blue-800" href="#">Link</a>
+        </li>
+      </ul>
 
-                    <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
-                        <span aria-hidden="true"></span>
-                        <span aria-hidden="true"></span>
-                        <span aria-hidden="true"></span>
-                    </a>
-                </div>
-
-                <div id="navbarBasicExample" class="navbar-menu">
-                    <div class="navbar-start">
-                        <a class="navbar-item">Home</a>
-                        <a class="navbar-item">Checkout</a>
-                    </div>
-
-                    <div class="navbar-end">
-                        <div class="navbar-item">
-                            <div class="buttons">
-                                <a class="button is-light">Cart</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-        </div>
-    );
-}
+    </div>
+  )
+};
 
 export default Navbar;

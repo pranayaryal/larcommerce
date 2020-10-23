@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { Switch, Route, Redirect } from 'react-router-dom';
-import './App.scss';
+//import './App.css';
+import './tailwind.css';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 
